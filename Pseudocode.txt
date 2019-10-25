@@ -1,0 +1,30 @@
+Controlled Crawling
+
+
+Pseudocode of run_spiders.sh
+
+
+1. Create an array to keep n spiders with corresponding Twitter dev accounts with constant IDs
+2. Create an array to keep processed and completed dates (year-month-day)
+3. For the day chosen from the time period between 2016-01-01 and 2018-01-01
+    1. Make a shell query to get the running spider IDs
+    2. Take an available spider ID
+    3. Run the corresponding spider for the given day, and take the Unix OS process Id
+    4. Insert into DB the information (spider_id, OS_process_id, target_date)
+
+----
+
+Pseudocode of check_running_spiders_start_if_ended_suddenly.sh
+
+1. Create an array to keep n spiders with corresponding Twitter dev accounts with constant IDs
+2. Make a shell query to get the running process IDs and corresponding spiderIds.
+3. Read from DB the actual running process IDs
+4. Compare the processIDs of Unix and DB. 
+5. For each processId that does not exist in Unix running process IDs
+    1. Get latest mongo inserted record Id for its target date. 
+    2. If last tweet time is not between 00:00 and 07:00, 
+        1. Restart the corresponding spiderId for the same date.
+        2. Get new processId.
+        3. Delete from DB the old processId record
+        4. Insert to DB the new processId with corresponding spiderId and date
+
